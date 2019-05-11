@@ -17,28 +17,15 @@ function GCI-AsParallel {
             [Parameter(Mandatory = $false)]
             [Switch]$Recurse
         )
+    if($Recurse){$SearchOption = "AllDirectories"}else{$SearchOption = "TopDirectoryOnly"}
+    [System.IO.DirectoryInfo[]]$dirInfo = [System.IO.DirectoryInfo]::new($Path)
 
-        [System.IO.DirectoryInfo[]]$dirInfo = [System.IO.DirectoryInfo]::new($Path)
-
-        Switch ($Recurse){
-            'True' 
-                {    
-                try{[System.IO.FileInfo[]]$Files = [System.Linq.ParallelEnumerable]::AsParallel(
-                    $dirInfo.EnumerateFiles("*",[System.IO.SearchOption]::AllDirectories) 
-                )}catch{$Files=$null}
-               try{[System.IO.DirectoryInfo[]]$Directories = [System.Linq.ParallelEnumerable]::AsParallel(
-                    $dirInfo.EnumerateDirectories("*",[System.IO.SearchOption]::AllDirectories)
-                )}catch{$Directories=$null}
-                }
-            'False' 
-                {    
-                try{[System.IO.FileInfo[]]$Files = [System.Linq.ParallelEnumerable]::AsParallel(
-                    $dirInfo.EnumerateFiles("*",[System.IO.SearchOption]::TopDirectoryOnly) 
-                )}catch{$Files=$null}
-                try{[System.IO.DirectoryInfo[]]$Directories = [System.Linq.ParallelEnumerable]::AsParallel(
-                    $dirInfo.EnumerateDirectories("*",[System.IO.SearchOption]::TopDirectoryOnly)
-                )}catch{$Directories=$null}
-                }
-        }
-    return $Directories+$Files
+            try{[System.IO.FileInfo[]]$Files = [System.Linq.ParallelEnumerable]::AsParallel(
+                $dirInfo.EnumerateFiles("*",[System.IO.SearchOption]::$SearchOption) 
+            )}catch{$Files=$null}
+            try{[System.IO.DirectoryInfo[]]$Directories = [System.Linq.ParallelEnumerable]::AsParallel(
+                $dirInfo.EnumerateDirectories("*",[System.IO.SearchOption]::$SearchOption)
+            )}catch{$Directories=$null}
+   
+   return $Directories+$Files
 }
