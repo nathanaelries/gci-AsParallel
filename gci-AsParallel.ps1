@@ -1,4 +1,3 @@
-CLear-Host
 function GCI-AsParallel {
     <#
     .SYNOPSIS
